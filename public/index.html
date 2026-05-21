@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestor de Tareas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="contenedor">
+    <header>
+      <h1>Gestor de Tareas</h1>
+      <p class="subtitulo">Organiza tu día de forma sencilla</p>
+    </header>
+
+    <section class="formulario-seccion">
+      <form id="form-tarea">
+        <input type="text" id="titulo" placeholder="Título de la tarea" maxlength="100" required />
+        <textarea id="descripcion" placeholder="Descripción" rows="2" maxlength="100" required></textarea>
+        <button type="submit" id="btn-guardar">Añadir tarea</button>
+        <button type="button" id="btn-cancelar" class="oculto">Cancelar</button>
+      </form>
+    </section>
+
+    <section class="filtros">
+      <button class="filtro activo" data-filtro="todas">Todas</button>
+      <button class="filtro" data-filtro="pendientes">Pendientes</button>
+      <button class="filtro" data-filtro="completadas">Completadas</button>
+    </section>
+
+    <section class="lista-seccion">
+      <ul id="lista-tareas"></ul>
+      <p id="mensaje-vacio" class="mensaje-vacio oculto">
+        No hay tareas para mostrar.
+      </p>
+    </section>
+
+    <footer>
+      <span id="contador">0 tareas</span>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
