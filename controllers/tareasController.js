@@ -1,95 +1,63 @@
 // controllers/tareasController.js
-// Lógica CRUD de las tareas. Almacenamiento en memoria.
+// Controladores HTTP de las tareas.
+// Sólo se ocupan de leer la request, llamar al service y responder.
+// La lógica de negocio vive en /services y los datos en /data.
 
-let tareas = [
-  {
-    id: 1,
-    titulo: 'Bienvenido al gestor de tareas',
-    descripcion: 'Esta es una tarea de ejemplo. Puedes editarla o eliminarla.',
-    completada: false,
-    creadaEn: new Date().toISOString()
-  }
-];
-
-let proximoId = 2;
+const tareasService = require('../services/tareasService');
 
 // GET /api/tareas
 function obtenerTareas(req, res) {
+  const tareas = tareasService.listarTareas();
   res.json(tareas);
 }
 
 // GET /api/tareas/:id
 function obtenerTareaPorId(req, res) {
   const id = parseInt(req.params.id, 10);
-  const tarea = tareas.find(t => t.id === id);
+  const tarea = tareasService.obtenerTarea(id);
 
   if (!tarea) {
     return res.status(404).json({ error: 'Tarea no encontrada' });
   }
-
   res.json(tarea);
 }
 
 // POST /api/tareas
 function crearTarea(req, res) {
-  const { titulo, descripcion = '', completada = false } = req.body;
-
-  const nuevaTarea = {
-    id: proximoId++,
-    titulo: titulo.trim(),
-    descripcion: descripcion.trim(),
-    completada,
-    creadaEn: new Date().toISOString()
-  };
-
-  tareas.push(nuevaTarea);
-  res.status(201).json(nuevaTarea);
+  const nueva = tareasService.crearTarea(req.body);
+  res.status(201).json(nueva);
 }
 
 // PUT /api/tareas/:id
 function actualizarTarea(req, res) {
   const id = parseInt(req.params.id, 10);
-  const indice = tareas.findIndex(t => t.id === id);
+  const tarea = tareasService.actualizarTarea(id, req.body);
 
-  if (indice === -1) {
+  if (!tarea) {
     return res.status(404).json({ error: 'Tarea no encontrada' });
   }
-
-  const { titulo, descripcion, completada } = req.body;
-
-  tareas[indice] = {
-    ...tareas[indice],
-    titulo: titulo.trim(),
-    descripcion: (descripcion ?? tareas[indice].descripcion).trim(),
-    completada: completada ?? tareas[indice].completada
-  };
-
-  res.json(tareas[indice]);
+  res.json(tarea);
 }
 
 // PATCH /api/tareas/:id/completar  -> alternar estado completada
 function alternarCompletada(req, res) {
   const id = parseInt(req.params.id, 10);
-  const tarea = tareas.find(t => t.id === id);
+  const tarea = tareasService.alternarCompletada(id);
 
   if (!tarea) {
     return res.status(404).json({ error: 'Tarea no encontrada' });
   }
-
-  tarea.completada = !tarea.completada;
   res.json(tarea);
 }
 
 // DELETE /api/tareas/:id
 function eliminarTarea(req, res) {
   const id = parseInt(req.params.id, 10);
-  const indice = tareas.findIndex(t => t.id === id);
+  const eliminada = tareasService.eliminarTarea(id);
 
-  if (indice === -1) {
+  if (!eliminada) {
     return res.status(404).json({ error: 'Tarea no encontrada' });
   }
-
-  const eliminada = tareas.splice(indice, 1)[0];
   res.json({ mensaje: 'Tarea eliminada', tarea: eliminada });
 }
 
